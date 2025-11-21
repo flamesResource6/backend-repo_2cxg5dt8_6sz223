@@ -12,34 +12,27 @@ Model name is converted to lowercase for the collection name:
 """
 
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, List
 
-# Example schemas (replace with your own):
+class Episode(BaseModel):
+    number: int = Field(..., ge=1, description="Episode number starting from 1")
+    title: str = Field(..., description="Episode title")
+    video_url: Optional[str] = Field(None, description="Public/embeddable video URL (e.g., YouTube)")
+    language: str = Field("Hindi", description="Audio language, e.g., Hindi, Japanese")
 
-class User(BaseModel):
+class Anime(BaseModel):
     """
-    Users collection schema
-    Collection name: "user" (lowercase of class name)
+    Anime collection schema
+    Collection name: "anime"
     """
-    name: str = Field(..., description="Full name")
-    email: str = Field(..., description="Email address")
-    address: str = Field(..., description="Address")
-    age: Optional[int] = Field(None, ge=0, le=120, description="Age in years")
-    is_active: bool = Field(True, description="Whether user is active")
-
-class Product(BaseModel):
-    """
-    Products collection schema
-    Collection name: "product" (lowercase of class name)
-    """
-    title: str = Field(..., description="Product title")
-    description: Optional[str] = Field(None, description="Product description")
-    price: float = Field(..., ge=0, description="Price in dollars")
-    category: str = Field(..., description="Product category")
-    in_stock: bool = Field(True, description="Whether product is in stock")
-
-# Add your own schemas here:
-# --------------------------------------------------
+    title: str = Field(..., description="Anime title")
+    description: Optional[str] = Field(None, description="Short synopsis")
+    cover_image: Optional[str] = Field(None, description="Poster/cover image URL")
+    trailer_url: Optional[str] = Field(None, description="Embeddable trailer URL (YouTube)" )
+    languages: List[str] = Field(default_factory=lambda: ["Hindi"], description="Available languages")
+    genres: List[str] = Field(default_factory=list, description="Genre tags")
+    year: Optional[int] = Field(None, ge=1950, le=2100, description="Release year")
+    episodes: List[Episode] = Field(default_factory=list, description="List of episodes")
 
 # Note: The Flames database viewer will automatically:
 # 1. Read these schemas from GET /schema endpoint
